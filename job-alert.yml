@@ -2,9 +2,8 @@ name: sm Job Alert
 
 on:
   schedule:
-    # Runs every 10 minutes
     - cron: '*/10 * * * *'
-  workflow_dispatch: # allows manual trigger from GitHub UI
+  workflow_dispatch:
 
 jobs:
   scrape-and-notify:
@@ -14,7 +13,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          # Need write permission to commit seen_jobs.json back
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
@@ -29,16 +27,9 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install chromium --with-deps
 
-      - name: Restore seen_jobs cache
-        uses: actions/cache@v4
-        with:
-          path: data/seen_jobs.json
-          key: seen-jobs-${{ github.run_id }}
-          restore-keys: |
-            seen-jobs-
-
       - name: Run job scraper
         env:
+          NODE_ENV: production
           JOB_KEYWORD: ${{ secrets.JOB_KEYWORD }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
