@@ -1,4 +1,4 @@
-name: Siemens Job Alert
+name: sm Job Alert
 
 on:
   schedule:
